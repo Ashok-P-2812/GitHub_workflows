@@ -4,5 +4,5 @@ jobs:
     say-hello:
         runs-on: ubuntu-latest
         steps:
-            - name: say my name
+            - name: Say my Name
               run: echo "Hello, my name is Ashok"
