@@ -1,0 +1,49 @@
+
+name: Self Hosted Runner Demo
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+jobs:
+  sample-job:
+    name: Sample Job on Self Hosted Runner
+
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Display Runner Information
+        run: |
+          echo "Hello from GitHub Actions!"
+          echo "Running on Self Hosted Runner"
+          echo "Hostname: $(hostname)"
+          echo "User: $(whoami)"
+          echo "Current Directory: $(pwd)"
+
+      - name: Check OS Details
+        run: |
+          uname -a
+          cat /etc/os-release
+
+      - name: Check Installed Tools
+        run: |
+          git --version
+          docker --version
+          aws --version
+
+      - name: Sample Build Job
+        run: |
+          echo "Starting sample build..."
+          mkdir -p build
+          echo "Build completed successfully!" > build/output.txt
+          cat build/output.txt
+
+      - name: Job Completed
+        run: |
+          echo "Self Hosted Runner job completed successfully!"
