@@ -2,9 +2,7 @@
 name: Self Hosted Runner Demo
 
 on:
-  push:
-    branches:
-      - main
+
 
   workflow_dispatch:
 
