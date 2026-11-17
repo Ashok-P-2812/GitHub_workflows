@@ -10,7 +10,7 @@ on:
 
 jobs:
   sample-job:
-    name: Sample Job on Self Hosted Runner
+    name: Sample Job on Self Hosted Runner -1
 
     runs-on: self-hosted
 
