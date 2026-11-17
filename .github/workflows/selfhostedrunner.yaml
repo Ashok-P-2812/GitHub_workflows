@@ -34,8 +34,6 @@ jobs:
       - name: Check Installed Tools
         run: |
           git --version
-          docker --version
-          aws --version
 
       - name: Sample Build Job
         run: |
