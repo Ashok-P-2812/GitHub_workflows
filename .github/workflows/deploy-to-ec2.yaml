@@ -42,7 +42,7 @@ jobs:
             --exclude='.git' \
             --exclude='.github' \
             -e "ssh -i ~/.ssh/id_rsa" \
-            ./ ${{ env.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/html/
+            ./mycode ${{ env.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/html/
 
       # Step 4: Validate Apache configuration
       - name: Validate Apache Configuration
