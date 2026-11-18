@@ -1,0 +1,71 @@
+
+name: Build and Push Docker Image to Amazon ECR
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-push:
+    name: Build Docker Image and Push to ECR
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # Step 1: Checkout GitHub repository
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Step 2: Configure AWS credentials
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      # Step 3: Login to Amazon ECR
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # Step 4: Build Docker Image
+      - name: Build Docker Image
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          ECR_REPO_NAME: ${{ secrets.ECR_REPO_NAME }}
+        run: |
+          REGISTRY=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+
+          docker build \
+            -t $REGISTRY/$ECR_REPO_NAME:latest \
+            -t $REGISTRY/$ECR_REPO_NAME:$GITHUB_SHA \
+            .
+
+      # Step 5: Push Docker Image to ECR
+      - name: Push Docker Image to ECR
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          ECR_REPO_NAME: ${{ secrets.ECR_REPO_NAME }}
+        run: |
+          REGISTRY=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+
+          docker push $REGISTRY/$ECR_REPO_NAME:latest
+
+          docker push $REGISTRY/$ECR_REPO_NAME:$GITHUB_SHA
+
+      # Step 6: Verify ECR Image
+      - name: Verify ECR Image
+        run: |
+          aws ecr describe-images \
+            --repository-name "${{ secrets.ECR_REPO_NAME }}" \
+            --region "${{ secrets.AWS_DEFAULT_REGION }}"
+
+          echo "Docker image successfully pushed to ECR!"
